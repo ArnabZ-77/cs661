@@ -12,7 +12,7 @@ def main():
 
     # 2. Load 3D Volume Data
     reader = vtk.vtkXMLImageDataReader()
-    reader.SetFileName("Isabel_3D.vti")  # Updated to use your actual 3D file
+    reader.SetFileName("Isabel_3D.vti")  # Ensure file matches assignment data
     reader.Update()
 
     # 3. Create Color Transfer Function (Strict specification matching table)
@@ -37,13 +37,13 @@ def main():
     volume_property.SetInterpolationTypeToLinear()
 
     if use_shading:
-        volume_property.ShadeOn()        # FIXED: Changed from ShadingOn to ShadeOn
+        volume_property.ShadeOn()
         volume_property.SetAmbient(0.5)   # Set required coefficients
         volume_property.SetDiffuse(0.5)   
         volume_property.SetSpecular(0.5)  
         print("Volume Rendering Profile: Phong Shading ENABLED.")
     else:
-        volume_property.ShadeOff()       # FIXED: Changed from ShadingOff to ShadeOff
+        volume_property.ShadeOff()
         print("Volume Rendering Profile: Phong Shading DISABLED.")
 
     # 6. Setup Smart Volume Mapper & Volume Actor
@@ -63,6 +63,7 @@ def main():
     
     outline_actor = vtk.vtkActor()
     outline_actor.SetMapper(outline_mapper)
+    outline_actor.GetProperty().SetColor(0, 0, 0) # Black outline for crisp visibility
 
     # 8. Setup Rendering Stage Window (Size fixed at 1000x1000)
     renderer = vtk.vtkRenderer()
@@ -76,7 +77,12 @@ def main():
     # Add actors to scene context
     renderer.AddViewProp(volume)
     renderer.AddActor(outline_actor)
-    renderer.SetBackground(1, 1, 1)  # White background for contrast clarity
+    renderer.SetBackground(1, 1, 1)  # White background matching standard reports
+
+    # Center camera frame configurations
+    renderer.ResetCamera()
+    camera = renderer.GetActiveCamera()
+    camera.Zoom(1.2) # Zoom in slightly to fit nicely in 1000x1000 window
 
     print("Launching window. Left-click and drag inside the frame to inspect perspectives.")
     render_window.Render()
